@@ -4,7 +4,10 @@ import { FilterBookDto } from '../dtos/filter.book.dto';
 import { BookEntity } from '../entities/book.entity';
 import { BooksService } from '../services/books.service';
 
-@Controller('v1/books')
+@Controller({
+  path: 'books',
+  version: '1',
+})
 export class BooksController {
   constructor(private bookService: BooksService) {}
 
