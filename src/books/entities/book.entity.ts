@@ -14,6 +14,6 @@ export class BookEntity {
   @Column()
   publisher: string;
 
-  @Column({ length: 1000 })
+  @Column({ length: 1000, nullable: true })
   description: string;
 }

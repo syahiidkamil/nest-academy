@@ -26,8 +26,18 @@ export class BooksService {
     return this.bookRepository.findOne(id);
   }
 
-  createBook(bookData: BookDto): Promise<BookEntity> {
+  async createBook(bookData: BookDto): Promise<BookEntity> {
     const bookEntity = this.bookRepository.create(bookData);
     return this.bookRepository.save(bookEntity);
+  }
+
+  async putBook(bookId: string, bookData: BookDto): Promise<BookEntity> {
+    await this.bookRepository.delete(bookId);
+    return this.bookRepository.save({ id: Number(bookId), ...bookData });
+  }
+
+  async deleteBook(bookId: string): Promise<string> {
+    await this.bookRepository.delete(bookId);
+    return `Book with id:${bookId} has been successfully deleted`;
   }
 }
