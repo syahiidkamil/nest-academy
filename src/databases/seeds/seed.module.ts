@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BookDetailEntity } from 'src/books/entities/book-detail.entity';
 import { BookEntity } from 'src/books/entities/book.entity';
 import databaseConfig from 'src/common/config/database.config';
 import { BookSeedService } from './book-seed.service';
@@ -21,7 +22,7 @@ import { BookSeedService } from './book-seed.service';
       },
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([BookEntity]),
+    TypeOrmModule.forFeature([BookEntity, BookDetailEntity]),
   ],
 
   providers: [BookSeedService],
