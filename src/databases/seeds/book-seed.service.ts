@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BookDto } from 'src/books/dtos/create.book.dto';
 import { SeedBookDto } from 'src/books/dtos/seed.book';
 import { BookDetailEntity } from 'src/books/entities/book-detail.entity';
 import { BookEntity } from 'src/books/entities/book.entity';
@@ -9,27 +10,31 @@ import * as bookSeedList from './book-seed-list.json';
 @Injectable()
 export class BookSeedService {
   constructor(
-    @InjectRepository(BookEntity)
-    private bookRepository: Repository<BookEntity>,
     @InjectRepository(BookDetailEntity)
-    private bookDetailRepository: Repository<BookDetailEntity>
+    private bookDetailRepository: Repository<BookDetailEntity>,
+    @InjectRepository(BookEntity)
+    private bookRepository: Repository<BookEntity>
   ) {}
 
-  async saveBookDetail(profileId): Promise<void> {
+  private async saveBookDetail(): Promise<BookDetailEntity> {
     const bookDetailSeed = {
-      profileId,
-      profile: profileId,
-      price: `${1000 + Math.floor(Math.random()) * 10000}`,
-      quantity: `${Math.floor(Math.random()) * 20}`
+      price: `${1000 + Math.floor(Math.random() * 10000)}`,
+      quantity: `${Math.floor(Math.random() * 20)}`
     }
     const bookDetailEntity = this.bookDetailRepository.create(bookDetailSeed)
     await this.bookDetailRepository.save(bookDetailEntity);
+    return bookDetailEntity;
+  }
+
+  async updateBookDetail(bookDetailId: number, bookEntity: BookEntity): Promise<void> {
+    await this.bookDetailRepository.update(bookDetailId, {profile: bookEntity});
   }
 
   async saveBookAndDetail(bookSeed: SeedBookDto): Promise<void> {
-    const bookEntity = this.bookRepository.create(bookSeed)
-    await this.bookRepository.save(bookEntity);
-    await this.saveBookDetail(bookEntity.id);
+    const bookDetailEntity = await this.saveBookDetail();
+    console.log('bookDetailEntity', bookDetailEntity);
+    const bookEntity = await this.bookRepository.save({...bookSeed, book: bookDetailEntity });
+    await this.updateBookDetail(bookDetailEntity.id, bookEntity)
   }
 
   async seed(): Promise<void> {
