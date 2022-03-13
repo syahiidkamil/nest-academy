@@ -25,20 +25,9 @@ export class ValidationPipe implements PipeTransform<any> {
   private handleErrors(errors: ValidationError[]){
     const { length: errorsLength } = errors;
     if (errorsLength > 0) {
-      const errorMessages = errors.reduce(
-        (stringAccumulator, errorObject, index) => {
-          const key = Object.keys(errorObject.constraints)[0];
-          const errorMessageArray = errorObject.constraints[key].split(' ');
-          const firstWord = errorMessageArray[0];
-          errorMessageArray[0] = this.camelToSnakeCase(firstWord);
-          const prefix = index === 0 ? '' : ' ';
-          const suffix = index === (errorsLength - 1) ? '.': ',';
-          return stringAccumulator += `${prefix}${errorMessageArray.join(' ')}${suffix}`;
-        },
-        ''
-      );
+      const errorsMessage = this.getErrorsMessage(errors, errorsLength)
 
-      throw new BadRequestException(errorMessages);
+      throw new BadRequestException(errorsMessage);
     }
   }
 
@@ -49,5 +38,21 @@ export class ValidationPipe implements PipeTransform<any> {
 
   private camelToSnakeCase(str){
     return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  }
+
+  private getErrorsMessage(errors, errorsLength){
+    const errorsMessages = errors.reduce(
+      (stringAccumulator, errorObject, index) => {
+        const key = Object.keys(errorObject.constraints)[0];
+        const errorMessageArray = errorObject.constraints[key].split(' ');
+        const firstWord = errorMessageArray[0];
+        errorMessageArray[0] = this.camelToSnakeCase(firstWord);
+        const prefix = index === 0 ? '' : ' ';
+        const suffix = index === (errorsLength - 1) ? '.': ',';
+        return stringAccumulator += `${prefix}${errorMessageArray.join(' ')}${suffix}`;
+      },
+      ''
+    );
+    return errorsMessages;
   }
 }
