@@ -23,8 +23,7 @@
     "migration:generate": "npm run typeorm:cli -- migration:generate -n",
     "migration:create": "npm run typeorm:cli -- migration:create -n",
     "migration:run": "npm run typeorm:cli -- migration:run",
-    "migration:revert": "npm run typeorm:cli -- migration:revert",
-    "seed": "ts-node -r tsconfig-paths/register ./src/databases/seeds/seed.ts"
+    "migration:revert": "npm run typeorm:cli -- migration:revert"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
