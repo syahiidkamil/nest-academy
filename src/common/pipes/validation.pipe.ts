@@ -17,18 +17,15 @@ export class ValidationPipe implements PipeTransform<any> {
     const errors = await validate(object);
     const { length: errorsLength } = errors;
     if (errorsLength > 0) {
-      this.handleErrors(errors);
+      this.handleErrors(errors, errorsLength);
     }
     return value;
   }
 
-  private handleErrors(errors: ValidationError[]){
-    const { length: errorsLength } = errors;
-    if (errorsLength > 0) {
-      const errorsMessage = this.getErrorsMessage(errors, errorsLength)
+  private handleErrors(errors: ValidationError[], errorsLength: number){
+    const errorsMessage = this.getErrorsMessage(errors, errorsLength)
 
-      throw new BadRequestException(errorsMessage);
-    }
+    throw new BadRequestException(errorsMessage);
   }
 
   private toValidate(metatype: Function): boolean {
@@ -41,6 +38,7 @@ export class ValidationPipe implements PipeTransform<any> {
   }
 
   private getErrorsMessage(errors, errorsLength){
+    const emptyString = '';
     const errorsMessages = errors.reduce(
       (stringAccumulator, errorObject, index) => {
         const key = Object.keys(errorObject.constraints)[0];
@@ -51,7 +49,7 @@ export class ValidationPipe implements PipeTransform<any> {
         const suffix = index === (errorsLength - 1) ? '.': ',';
         return stringAccumulator += `${prefix}${errorMessageArray.join(' ')}${suffix}`;
       },
-      ''
+      emptyString
     );
     return errorsMessages;
   }
