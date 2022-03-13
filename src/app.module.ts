@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BooksModule } from './books/books.module';
+import { BookLoansModule } from './book-loans/book-loans.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './common/config/configuration';
 import databaseConfig from './common/config/database.config';
@@ -13,7 +14,6 @@ import databaseConfig from './common/config/database.config';
       load: [configuration, databaseConfig],
       isGlobal: true,
     }),
-    BooksModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
@@ -23,6 +23,8 @@ import databaseConfig from './common/config/database.config';
       },
       inject: [ConfigService],
     }),
+    BooksModule,
+    BookLoansModule,
   ],
   controllers: [AppController],
   providers: [AppService],
