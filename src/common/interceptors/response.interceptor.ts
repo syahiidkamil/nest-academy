@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { decamelize } from '@ridi/object-case-converter';
 
 export interface Response<T> {
   data: T;
@@ -17,6 +18,6 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<Response<T>> {
-    return next.handle().pipe(map((data) => ({ data })));
+    return next.handle().pipe(map((data) => ({ data: decamelize(data) })));
   }
 }
